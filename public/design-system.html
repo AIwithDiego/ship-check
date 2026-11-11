@@ -80,13 +80,24 @@ section{display:grid;gap:1.2rem}
   <section>
     <h2 class="head">Things you press</h2>
     <div class="row">
-      <button class="btn" type="button">Ring the bell</button>
-      <button class="btn btn--s" type="button">Copy</button>
+      <span class="btn">Ring the bell</span>
+      <span class="btn btn--s">Copy</span>
+      <span class="btn btn--s btn--quiet">Sound is on</span>
       <span class="tape"><span>Checks paid</span> <b>12</b></span>
     </div>
     <label class="sr" for="demo">A field</label>
     <input class="field" id="demo" placeholder="https://your-site.com">
-    <div class="cmd"><pre>npx mppx@0.17.1 account create -a me</pre><button class="btn btn--s" type="button">Copy</button></div>
+    <div class="cmd"><pre>npx mppx@0.17.1 account create -a me</pre><span class="btn btn--s">Copy</span></div>
+  </section>
+
+  <section>
+    <h2 class="head">The bout</h2>
+    <p class="sub">What plays while a check runs. The bell, then the glove spars with the slop monster while it spits its favourite words. A pass knocks it out. A fail leaves it standing. With reduced motion there is no bout, only the result.</p>
+    <div class="arena" id="arena" hidden aria-hidden="true"></div>
+    <div class="row">
+      <button class="btn" id="win" type="button">Play a win</button>
+      <button class="btn" id="loss" type="button">Play a loss</button>
+    </div>
   </section>
 
   <section>
@@ -105,9 +116,21 @@ section{display:grid;gap:1.2rem}
       <li>One block word and one neon word per page.</li>
       <li>Colour means a result. A round with no result has no colour.</li>
       <li>No emoji, no icons standing in for words.</li>
-      <li>Motion: the call lands once. Nothing else moves, and with reduced motion nothing does.</li>
+      <li>Motion: the bout plays while a check runs and the call lands once. Nothing else moves, and with reduced motion nothing does.</li>
+      <li>The monster is the only purple thing on the site. It is made of everything round 3 flags.</li>
     </ul>
   </section>
 </main>
+<script src="/public/bout.js"></script>
+<script>
+(function () {
+  var arena = document.getElementById("arena");
+  function play(ship) { Bout.start(arena); Bout.finish(arena, ship); }
+  document.getElementById("win").addEventListener("click", function () { play(true); });
+  document.getElementById("loss").addEventListener("click", function () { play(false); });
+  var q = new URLSearchParams(location.search).get("play");
+  if (q) play(q === "win");
+})();
+</script>
 </body>
 </html>

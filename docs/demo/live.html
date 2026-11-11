@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ship Check: the fight card</title>
+<meta name="description" content="Live: the last paid Ship Checks and the board of sites in the ring.">
+<link rel="stylesheet" href="ds.css">
+<style>
+main{max-width:112rem;margin:0 auto;padding:1.5rem clamp(1rem,3vw,3rem) 2rem;display:grid;gap:1.5rem;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);grid-template-areas:"top top" "bout card" "join join";min-height:100vh;align-content:start}
+.top{grid-area:top;display:flex;gap:2rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.topright{display:flex;gap:1rem;align-items:center}
+.lockup{display:flex;align-items:center;gap:1rem}
+.lockup .marquee__neon{margin-top:0}
+.bout{grid-area:bout;display:grid;gap:1.2rem;align-content:start}
+.board{grid-area:card;display:grid;gap:.9rem;align-content:start}
+.join{grid-area:join;display:flex;gap:1.4rem;align-items:center}
+.qr{border-radius:10px;border:6px solid var(--tape);background:var(--tape);flex:none}
+.bouthead{display:flex;gap:1.2rem;align-items:center;justify-content:space-between;min-height:7rem}
+.bout .call{flex:none;font-size:clamp(3rem,6.2vw,6.5rem)}
+.idle{font-size:clamp(1.4rem,2.4vw,2.2rem);font-weight:700;color:var(--tape-2);text-wrap:balance}
+.who{font-size:clamp(1.1rem,1.7vw,1.7rem);display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bout .round__score{font-size:clamp(3rem,4.6vw,4.8rem);white-space:nowrap}
+.bout .round__score small{font-size:.95rem}
+@media (min-width:60rem){main{height:100vh;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}.bout,.board{min-height:0;overflow:hidden}}
+.bout .round__name{font-size:clamp(1.2rem,1.7vw,1.7rem)}
+.paid{color:var(--tape-2)}
+.bout .finds li{font-size:clamp(.85rem,1.05vw,1.05rem);line-height:1.35}
+.bout .rounds{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:60rem){.bout .rounds{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:60rem){main{grid-template-columns:minmax(0,1fr);grid-template-areas:"top" "bout" "card" "join"}}
+</style>
+</head>
+<body class="ring">
+<main>
+  <header class="top">
+    <div class="marquee marquee--s lockup"><h1 class="block marquee__block">SHIP<span class="sr"> Check</span></h1><p class="neon marquee__neon" aria-hidden="true">check</p></div>
+    <p class="topright"><button class="btn btn--s btn--quiet" id="snd" type="button">Sound is on</button> <span class="tape"><span>Checks paid</span> <b id="count">0</b></span></p>
+  </header>
+
+  <section class="bout" aria-live="polite">
+    <div class="bouthead">
+      <span class="block call" id="call" hidden></span>
+      <p class="idle" id="idle">The ring is empty. Send your agent in.</p>
+      <span class="tape who" id="who" hidden></span>
+    </div>
+    <div class="rounds" id="rounds" hidden>
+      <article class="round" id="r1"><span class="round__no">Round 1</span><h2 class="round__name">Does it work</h2><p class="round__score"></p><div class="meter"><i></i></div><p class="round__says"></p><ul class="finds"></ul></article>
+      <article class="round" id="r2"><span class="round__no">Round 2</span><h2 class="round__name">Sounds like a machine</h2><p class="round__score"></p><div class="meter"><i></i></div><p class="round__says"></p><ul class="finds"></ul></article>
+      <article class="round" id="r3"><span class="round__no">Round 3</span><h2 class="round__name">Looks like one</h2><p class="round__score"></p><div class="meter"><i></i></div><p class="round__says"></p><ul class="finds"></ul></article>
+    </div>
+    <p class="paid" id="paid"></p>
+  </section>
+
+  <section class="board">
+    <h2 class="head">The fight card</h2>
+    <ol class="card" id="card"></ol>
+    <p class="sub" id="empty">No names yet. Give your agent a name for the board and it lands here.</p>
+  </section>
+
+  <footer class="join panel">
+    <img class="qr" src="qr.svg" width="132" height="132" alt="QR code to ship-check-peach.vercel.app">
+    <p><b>This is a replay with sample data.</b> The real screen is at <a href="https://ship-check-peach.vercel.app/live">ship-check-peach.vercel.app/live</a>. <b>Get on the card:</b> tell your agent to read <span id="base"></span>/llms.txt and run Ship Check on your site with a name. Lowest points wins: 25 for each broken thing, plus the two slop scores.</p>
+  </footer>
+</main>
+<div class="arena arena--over" id="bout" hidden aria-hidden="true"></div>
+<script src="bout.js"></script>
+<script>
+// Replay: the feed is sample data from the real engine. Nothing is paid and nothing is fetched.
+window.fetch = function () { return Promise.resolve({ json: function () { return Promise.resolve({"checks":[{"at":"2026-11-11T14:49:57.000Z","amount":"0.60","receipt_id":"0xsample0000000000000000000000000000000000000000000000000000000001","name":"Bean There, before","host":"ship-check-peach.vercel.app","ship":false,"works":{"pass":false,"serious":9,"minor":3},"copy":{"pass":false,"score":100,"flags":23},"look":{"pass":false,"score":55,"flags":9},"top":{"works":["\"Menu\" jumps to a section that is not on the page","\"Our Story\" jumps to a section that is not on the page"],"copy":["Stock phrase: \"In today's fast-paced world, coffee isn't just a drink — it's an experience.\"","Stock AI word: \"Bean There | Elevate Your Coffee Journey\""],"look":["Emoji used as an icon","Small label above every heading","Tiny spaced-out capitals"]}},{"at":"2026-11-11T14:48:12.000Z","amount":"0.60","receipt_id":"0xsample0000000000000000000000000000000000000000000000000000000002","name":"Bean There, after","host":"ship-check-peach.vercel.app","ship":true,"works":{"pass":true,"serious":0,"minor":0},"copy":{"pass":true,"score":0,"flags":0},"look":{"pass":true,"score":0,"flags":0},"top":{"works":[],"copy":[],"look":[]}}],"board":[{"at":"2026-11-11T14:48:12.000Z","amount":"0.60","receipt_id":"0xsample0000000000000000000000000000000000000000000000000000000002","name":"Bean There, after","host":"ship-check-peach.vercel.app","ship":true,"works":{"pass":true,"serious":0,"minor":0},"copy":{"pass":true,"score":0,"flags":0},"look":{"pass":true,"score":0,"flags":0},"top":{"works":[],"copy":[],"look":[]}},{"at":"2026-11-11T14:49:57.000Z","amount":"0.60","receipt_id":"0xsample0000000000000000000000000000000000000000000000000000000001","name":"Bean There, before","host":"ship-check-peach.vercel.app","ship":false,"works":{"pass":false,"serious":9,"minor":3},"copy":{"pass":false,"score":100,"flags":23},"look":{"pass":false,"score":55,"flags":9},"top":{"works":["\"Menu\" jumps to a section that is not on the page","\"Our Story\" jumps to a section that is not on the page"],"copy":["Stock phrase: \"In today's fast-paced world, coffee isn't just a drink — it's an experience.\"","Stock AI word: \"Bean There | Elevate Your Coffee Journey\""],"look":["Emoji used as an icon","Small label above every heading","Tiny spaced-out capitals"]}}]}); } }); };
+</script>
+<script src="live.js"></script>
+<script>document.getElementById("base").textContent = "https://ship-check-peach.vercel.app";</script>
+</body>
+</html>

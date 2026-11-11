@@ -17,6 +17,8 @@ export interface LiveCheck {
   works: Summary["works"];
   copy: Summary["copy"];
   look: Summary["look"];
+  /** Only on checks that asked for the board by name: the worst three findings per round, for the room. */
+  top?: { works: string[]; copy: string[]; look: string[] };
 }
 
 const MAX_CHECKS = 20;
@@ -35,8 +37,8 @@ export function boardName(raw: unknown): string | null {
   if (typeof raw !== "string") return null;
   const s = raw.normalize("NFKC").replace(/\s+/g, " ").trim();
   if (s.length < 2 || s.length > 24) return null;
-  if (!/^[\p{L}\p{N} ._'&+-]+$/u.test(s)) return null;
-  if (BLOCKED.test(s.replace(/[ ._'&+-]/g, ""))) return null;
+  if (!/^[\p{L}\p{N} ._'&+\-()!,:#@/]+$/u.test(s)) return null;
+  if (BLOCKED.test(s.replace(/[^\p{L}\p{N}]/gu, ""))) return null;
   return s;
 }
 

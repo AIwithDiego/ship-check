@@ -46,7 +46,9 @@ ol.steps li>span{display:block;margin-bottom:.5rem}
       <input class="field" id="u" name="url" type="url" inputmode="url" autocomplete="url" placeholder="https://your-site.com" required>
       <button class="btn" id="go" type="submit">Ring the bell</button>
     </form>
+    <p><button class="btn btn--s btn--quiet" id="mute" type="button">Sound is on</button></p>
     <p class="fine" id="msg" role="status"></p>
+    <div class="arena" id="arena" hidden aria-hidden="true"></div>
     <div id="out" hidden>
       <div class="outhead">
         <span class="block call" id="call"></span>
@@ -84,10 +86,11 @@ ol.steps li>span{display:block;margin-bottom:.5rem}
   </section>
 
   <footer class="fine">
-    <p>Ship Check says what reads as machine-made and why. It never says who made it. It reads the page's HTML and CSS and does not run it in a browser yet. Nothing about your page is stored; the fight card keeps the last results for 24 hours.</p>
+    <p>Ship Check says what reads as machine-made and why. It never says who made it. It reads the page's HTML and CSS and does not run it in a browser yet. Your page is not stored. The fight card keeps the last scores for 24 hours and, for sites that joined it by name, the top three findings per round.</p>
     <p><a href="/llms.txt">How an agent uses it</a>, <a href="/openapi.json">the API</a>, <a href="/live">the fight card</a>, <a href="/design">the design system</a>. Round 3 runs on <a href="https://github.com/nutlope/hallmark">Hallmark</a>'s gates (MIT, Together AI). Built at Agentic Dev Day Dublin, 11 November 2026, by Diego Bauer of AIwithDiego.</p>
   </footer>
 </main>
+<script src="/public/bout.js"></script>
 <script>
 (function () {
   var f = document.getElementById("f"), msg = document.getElementById("msg"), out = document.getElementById("out"), go = document.getElementById("go");
@@ -104,13 +107,19 @@ ol.steps li>span{display:block;margin-bottom:.5rem}
     e.preventDefault();
     var url = document.getElementById("u").value.trim();
     if (url && !/^https?:\/\//i.test(url)) url = "https://" + url;
-    go.disabled = true; msg.textContent = "In the ring. This takes a few seconds.";
+    go.disabled = true; msg.textContent = "In the ring. This takes a few seconds."; out.hidden = true;
+    var arena = document.getElementById("arena"); Bout.start(arena);
     fetch("/score", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ url: url }) })
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (x) {
-        go.disabled = false;
-        if (!x.ok) { msg.textContent = "Not checked: " + (x.j.error || "something went wrong") + "."; out.hidden = true; return; }
-        var j = x.j; msg.textContent = "";
+        if (!x.ok) { go.disabled = false; Bout.stop(arena); msg.textContent = "Not checked: " + (x.j.error || "something went wrong") + "."; out.hidden = true; return; }
+        var j = x.j;
+        return Bout.finish(arena, j.ship).then(function () { show(j); });
+      })
+      .catch(function () { go.disabled = false; Bout.stop(arena); msg.textContent = "Not checked: the request did not get through."; });
+  });
+  function show(j) {
+        go.disabled = false; msg.textContent = j.ship ? "" : "The slop monster is still standing. Send your agent in.";
         var call = document.getElementById("call");
         call.textContent = j.ship ? "SHIP IT" : "FIX FIRST";
         call.className = "block call is-new " + (j.ship ? "block--win" : "block--lose");
@@ -119,9 +128,10 @@ ol.steps li>span{display:block;margin-bottom:.5rem}
         round("r2", j.copy.pass, j.copy.score, "/ 100 slop", j.copy.flags + " line(s) flagged. Under 30 passes.");
         round("r3", j.look.pass, j.look.score, "/ 100 slop", j.look.flags + " tell(s) flagged. Under 30 passes.");
         out.hidden = false;
-      })
-      .catch(function () { go.disabled = false; msg.textContent = "Not checked: the request did not get through."; });
-  });
+  }
+  var mute = document.getElementById("mute");
+  function label() { mute.textContent = Bout.muted() ? "Sound is off" : "Sound is on"; mute.setAttribute("aria-pressed", String(!Bout.muted())); }
+  mute.addEventListener("click", function () { Bout.toggleMute(); label(); }); label();
   document.querySelectorAll("[data-copy]").forEach(function (b) {
     b.addEventListener("click", function () {
       navigator.clipboard.writeText(document.getElementById(b.getAttribute("data-copy")).textContent).then(function () { b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy"; }, 1500); });

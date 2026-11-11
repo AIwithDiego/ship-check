@@ -2,13 +2,23 @@
 
 **The last check before a human sees a website. An AI agent pays 60 cents and gets three rounds back.**
 
+[![Live site](https://img.shields.io/badge/live_site-open-08203f?style=for-the-badge&labelColor=08203f&color=ff8f1f)](https://ship-check-peach.vercel.app)
+[![Replay demo](https://img.shields.io/badge/replay_demo-open-08203f?style=for-the-badge&labelColor=08203f&color=8ff6ff)](https://aiwithdiego.github.io/ship-check/)
+[![Design system](https://img.shields.io/badge/design_system-fight_night-08203f?style=for-the-badge&labelColor=08203f&color=ffc46b)](https://aiwithdiego.github.io/ship-check/design-system.html)
+[![tests](https://img.shields.io/github/actions/workflow/status/AIwithDiego/ship-check/tests.yml?branch=main&style=for-the-badge&label=tests&labelColor=08203f)](https://github.com/AIwithDiego/ship-check/actions/workflows/tests.yml)
 ![TypeScript](https://img.shields.io/badge/TypeScript-08203f?style=for-the-badge&logo=typescript&logoColor=8ff6ff)
 ![Stripe](https://img.shields.io/badge/Stripe_MPP-08203f?style=for-the-badge&logo=stripe&logoColor=8ff6ff)
 [![MIT](https://img.shields.io/badge/licence-MIT-08203f?style=for-the-badge&labelColor=08203f&color=ff8f1f)](LICENSE)
 
-Built at Agentic Dev Day Dublin (Stripe office) on 11 Nov 2026, the day after [AI Act Check](https://github.com/AIwithDiego/ai-act-check).
+[![Ship Check: the last check before a human sees your website. Three rounds, 60 cents, paid by your agent.](docs/assets/cover.png)](https://ship-check-peach.vercel.app)
 
-**Contents:** [The problem](#the-problem) · [What it does](#what-it-does) · [The three rounds](#the-three-rounds) · [The limits we chose](#the-limits-we-chose) · [Design system](#design-system) · [Run it yourself](#run-it-yourself) · [Credits](#credits)
+Built at Agentic Dev Day Dublin (Stripe office) on 11 Nov 2026, in one afternoon session, the day after [AI Act Check](https://github.com/AIwithDiego/ai-act-check).
+
+**[Try the real thing](https://ship-check-peach.vercel.app)** (free score in the browser, paid report for your agent, test money) · **[Open the replay](https://aiwithdiego.github.io/ship-check/)** (sample data, nothing is paid) · **[Open the design system](https://aiwithdiego.github.io/ship-check/design-system.html)** · [Run it yourself](#run-it-yourself)
+
+**Contents:** [The problem](#the-problem) · [What it does](#what-it-does) · [The three rounds](#the-three-rounds) · [The limits we chose](#the-limits-we-chose) · [Design system](#design-system) · [What went wrong](#what-went-wrong) · [Run it yourself](#run-it-yourself) · [Credits](#credits)
+
+![The bout: a page that loses, the slop monster wins; the same page fixed, the glove knocks it out](docs/assets/demo.gif)
 
 ## The problem
 
@@ -51,14 +61,27 @@ Round 1 passes with nothing serious. Rounds 2 and 3 are a score from 0 to 100 an
 
 - **Rules, no model.** The same page gets the same score. A flag that is wrong can be traced to the rule that raised it.
 - **It is not an AI detector.** Those flag real people. Ship Check says "this line reads as machine-written, and here is the habit", never "a machine wrote this".
-- **No browser yet.** It reads HTML and CSS. Text and buttons that only exist after JavaScript runs are not seen, and the report says so. Screenshots and console errors need a real browser in the cloud; that is the next step, not today's.
+- **No browser yet.** It reads HTML and CSS. A page that is an empty shell until JavaScript runs (most React sites) is refused before payment, with the reason, instead of being scored blank. A browser in the cloud is the next step, not today's.
 - **Round 3 is the roughest.** Designed sites use gradients and glass too. Those count for little alone; the cheap tells (emoji icons, the three cards, the label over every heading) carry the score.
 - **Addresses from strangers.** Every request goes through one fetcher that only dials public addresses, checks the address at connect time, and checks again on every redirect (`src/fetcher.ts`).
-- **Nothing about the page is stored.** The live feed keeps the last 20 scores for 24 hours. A site's address appears on the board only when the caller gives a name for it.
+- **The page is not stored.** The live feed keeps the last 20 scores for 24 hours. A site's address and its top three findings per round appear on the board only when the caller gives a name for it.
 
 ## Design system
 
 Fight night: a blue ring under the lights, chunky orange block letters, one line of neon script. Tokens and parts are in [`public/ds.css`](public/ds.css), shown at `/design`. The pages pass their own three rounds, which shaped the system: no gradient text, no accent word inside a heading, no glass.
+
+![The live screen: a named check that lost, with its worst findings under each round, and the fight card](docs/assets/live-screen.png)
+
+While a check runs, the glove spars with the slop monster. The monster is the only purple thing on the site, and it is drawn from what round 3 flags. A pass knocks it out. A fail leaves it standing.
+
+## What went wrong
+
+- **The first deploy went straight to production.** It was meant as a preview. On a new Vercel project the first deployment is assigned to production whatever you asked for.
+- **stripe.com scored 82 out of 100 on "looks machine-made".** Gradients, glass and one coloured word in a headline are Stripe's own look, the one generated sites copy. The round now splits cheap tells (emoji icons, three identical cards, a label over every heading) from imitated looks, which count for little alone. Stripe scores 19.
+- **A blank page got a perfect score.** A React site sends an almost empty page and fills it in with JavaScript. Ship Check read the empty page, found nothing wrong and said ship. It now refuses those pages before payment.
+- **Two false alarms on round 1.** A link that did not answer our server was called broken, and a newsletter form whose request lives in a script file was called a fake. Both are now reported as things to verify.
+
+**What I didn't build:** a browser in the cloud. Screenshots, console errors and pages drawn by JavaScript all need one. It is the first ticket after the event.
 
 ## Run it yourself
 

@@ -1,6 +1,6 @@
 // One check, three rounds: does it work, does it sound like a machine, does it
 // look like one. Nothing about the page is kept after the answer is sent.
-import { checkWorks, readPage, type Problem, type Probe } from "./checks.js";
+import { bodyWords, checkWorks, readPage, type Problem, type Probe } from "./checks.js";
 import { safeFetch, type Fetched } from "./fetcher.js";
 import { checkLook, type LookFlag } from "./look.js";
 import { checkCopy, type CopyFlag } from "./slop.js";
@@ -52,9 +52,17 @@ export async function analyse(page: Fetched, css: string[], probe?: Probe): Prom
   const parts = readPage(html, page.finalUrl);
   const [works, look] = await Promise.all([checkWorks(page, parts, probe), checkLook(html, css)]);
   const copy = checkCopy(parts.blocks, parts.htmlLang);
+  // "Thanks" with no request behind it is only knowable when all the page's script is
+  // in the page. With script files we cannot see, it is a thing to verify, not a failure.
+  const outside = parts.root.querySelectorAll("script").some((x) => x.getAttribute("src"));
   for (const evidence of look.fakeSends) {
-    works.problems.unshift({ kind: "form", serious: true, what: "A form says thanks without sending anything", where: evidence.slice(0, 160), fix: "Send the answers somewhere before showing success." });
-    works.serious++;
+    if (outside) {
+      works.problems.push({ kind: "form", serious: false, what: "Could not verify that a form sends its answers", where: evidence.slice(0, 160), fix: "Submit it yourself and check the answer arrives." });
+      works.minor++;
+    } else {
+      works.problems.unshift({ kind: "form", serious: true, what: "A form says thanks without sending anything", where: evidence.slice(0, 160), fix: "Send the answers somewhere before showing success." });
+      works.serious++;
+    }
   }
   const w = works.serious === 0;
   const c = copy.score < PASS_BELOW;
@@ -83,9 +91,21 @@ export function runCheck(url: string): Promise<Report> {
   if (hit && Date.now() - hit.at < CACHE_MS) return hit.report;
   const report = (async () => {
     const page = await safeFetch(url);
+    if (page.status >= 400) {
+      throw new NotAPage(
+        page.status === 404 || page.status === 410
+          ? `that address answers ${page.status}: there is no page there`
+          : `the site answered ${page.status} to our visit. It may refuse automated visitors, so there is nothing fair to score`,
+      );
+    }
     const type = String(page.headers["content-type"] ?? "");
     if (page.status < 400 && type && !/html|xml/i.test(type)) throw new NotAPage(`that address serves ${type.split(";")[0]}, not a web page`);
     const parts = readPage(page.body.toString("utf8"), page.finalUrl);
+    // An empty shell that JavaScript fills in: we would be scoring a blank page, and a blank page passes everything.
+    // Short pages are fine (example.com is 30 words); a body with next to nothing in it and scripts to fill it is not.
+    if (bodyWords(page.body.toString("utf8")) < 15 && parts.root.querySelectorAll("script").length > 0) {
+      throw new NotAPage("this page is drawn by JavaScript after it loads, and Ship Check reads the HTML only for now, so there is nothing fair to score");
+    }
     return analyse(page, await loadCss(parts.stylesheetUrls));
   })();
   cache.set(url, { at: Date.now(), report });

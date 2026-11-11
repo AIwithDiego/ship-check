@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ship Check replay: one page that loses, the same page fixed</title>
+<meta name="description" content="A replay of Ship Check with sample data from the real engine. Nothing is paid here. Two pages go in the ring: one loses all three rounds, the fixed one ships.">
+<link rel="stylesheet" href="ds.css">
+<style>
+main{max-width:66rem;margin:0 auto;padding:3rem 1.25rem 5rem;display:grid;gap:3rem}
+.top{display:grid;gap:1.4rem;justify-items:center;text-align:center;--rope-top:7rem}
+.lede{font-size:clamp(1.2rem,2.4vw,1.5rem);font-weight:700;max-width:38rem;text-wrap:balance}
+.pick{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+.stage{display:grid;gap:1.3rem}
+#out{display:grid;gap:1.3rem}
+#out[hidden]{display:none}
+.outhead{display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.round .finds{margin-top:.4rem}
+.finds li b{display:block;font-weight:700}
+.quote{color:var(--tape)}
+.ring a.tape{color:var(--ink);text-decoration:none}
+</style>
+</head>
+<body class="ring">
+<main>
+  <header class="top ropes">
+    <div class="marquee">
+      <div class="marquee__stars" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z"/></svg>
+      </div>
+      <h1 class="block marquee__block">SHIP<span class="sr"> Check</span></h1>
+      <p class="neon marquee__neon" aria-hidden="true">check</p>
+    </div>
+    <p class="lede">The last check before a human sees your website. Three rounds, 0.60 USD, paid by your agent.</p>
+    <p class="sub">This page is a replay. The reports below are what the real engine says about two sample pages, and nothing is paid here. The real thing, with the free score and the paid report, is at <a href="https://ship-check-peach.vercel.app">ship-check-peach.vercel.app</a>.</p>
+  </header>
+
+  <section class="stage panel panel--hot">
+    <h2 class="head">Put a page in the ring</h2>
+    <p class="sub">A café page an agent built, and the same page after the agent read the report and fixed it.</p>
+    <div class="pick">
+      <button class="btn" id="b-before" type="button">The page that loses</button>
+      <button class="btn" id="b-after" type="button">The same page fixed</button>
+      <button class="btn btn--s btn--quiet" id="mute" type="button">Sound is on</button>
+    </div>
+    <div class="arena" id="arena" hidden aria-hidden="true"></div>
+    <div id="out" hidden>
+      <div class="outhead">
+        <span class="block call" id="call"></span>
+        <a class="tape" id="page" href="https://ship-check-peach.vercel.app/demo/before">See the page</a>
+      </div>
+      <p class="sub" id="verdict"></p>
+      <div class="rounds">
+        <article class="round" id="r1"><span class="round__no">Round 1</span><h3 class="round__name">Does it work</h3><p class="round__score"></p><div class="meter"><i></i></div><p class="round__says"></p><ul class="finds"></ul></article>
+        <article class="round" id="r2"><span class="round__no">Round 2</span><h3 class="round__name">Does it sound like a machine</h3><p class="round__score"></p><div class="meter"><i></i></div><p class="round__says"></p><ul class="finds"></ul></article>
+        <article class="round" id="r3"><span class="round__no">Round 3</span><h3 class="round__name">Does it look like one</h3><p class="round__score"></p><div class="meter"><i></i></div><p class="round__says"></p><ul class="finds"></ul></article>
+      </div>
+    </div>
+  </section>
+
+  <footer class="fine">
+    <p>Ship Check says what reads as machine-made and why. It never says who made it. Rules, no model: the same page gets the same score.</p>
+    <p><a href="https://ship-check-peach.vercel.app">The real site</a>, <a href="live.html">the live screen (replay)</a>, <a href="design-system.html">the design system</a>, <a href="https://github.com/AIwithDiego/ship-check">the code</a>. Built at Agentic Dev Day Dublin, 11 November 2026, by Diego Bauer of AIwithDiego.</p>
+  </footer>
+</main>
+<script src="bout.js"></script>
+<script src="samples.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var arena = $("arena"), out = $("out"), busy = false;
+
+  function item(head, body, fix) {
+    var li = document.createElement("li");
+    var b = document.createElement("b"); b.textContent = head; li.append(b);
+    if (body) { var q = document.createElement("span"); q.className = "quote"; q.textContent = body; li.append(q); }
+    if (fix) { var s = document.createElement("small"); s.textContent = fix; li.append(s); }
+    return li;
+  }
+  function round(id, pass, score, unit, says, items) {
+    var el = $(id);
+    el.dataset.result = pass ? "win" : "lose";
+    var sc = el.querySelector(".round__score");
+    sc.textContent = String(score);
+    var s = document.createElement("small"); s.textContent = unit; sc.append(s);
+    el.querySelector(".meter i").style.setProperty("--v", Math.max(4, Math.min(100, unit === "serious" ? score * 12 : score)) + "%");
+    el.querySelector(".round__says").textContent = says;
+    var ul = el.querySelector(".finds");
+    ul.textContent = "";
+    items.forEach(function (i) { ul.append(i); });
+  }
+  function show(r, which) {
+    var call = $("call");
+    call.textContent = r.ship ? "SHIP IT" : "FIX FIRST";
+    call.className = "block call is-new " + (r.ship ? "block--win" : "block--lose");
+    $("page").href = "https://ship-check-peach.vercel.app/demo/" + which;
+    $("verdict").textContent = r.verdict;
+    round("r1", r.works.pass, r.works.serious, "serious",
+      r.works.pass ? "Nothing a visitor would hit." : r.works.serious + " things a visitor would hit, " + r.works.minor + " small.",
+      r.works.problems.map(function (p) { return item(p.what, "", p.fix); }));
+    round("r2", r.copy.pass, r.copy.score, "/ 100 slop", r.copy.flags.length + " lines flagged. Under 30 passes.",
+      r.copy.flags.map(function (f) { return item(f.tell, "“" + f.line + "”", f.why); }));
+    round("r3", r.look.pass, r.look.score, "/ 100 slop", r.look.flags.length + " tells flagged. Under 30 passes.",
+      r.look.flags.map(function (f) { return item(f.tell, f.evidence, f.fix); }));
+    out.hidden = false;
+  }
+  function play(which) {
+    if (busy) return;
+    busy = true; out.hidden = true;
+    var r = window.SAMPLES[which];
+    Bout.start(arena);
+    Bout.finish(arena, r.ship).then(function () { show(r, which); busy = false; });
+  }
+  $("b-before").addEventListener("click", function () { play("before"); });
+  $("b-after").addEventListener("click", function () { play("after"); });
+  var mute = $("mute");
+  function label() { mute.textContent = Bout.muted() ? "Sound is off" : "Sound is on"; mute.setAttribute("aria-pressed", String(!Bout.muted())); }
+  mute.addEventListener("click", function () { Bout.toggleMute(); label(); }); label();
+  var q = new URLSearchParams(location.search).get("play");
+  if (q === "before" || q === "after") play(q);
+})();
+</script>
+</body>
+</html>
