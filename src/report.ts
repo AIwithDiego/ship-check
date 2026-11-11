@@ -1,6 +1,6 @@
 // One check, three rounds: does it work, does it sound like a machine, does it
 // look like one. Nothing about the page is kept after the answer is sent.
-import { checkWorks, readPage, type Problem, type Probe } from "./checks.js";
+import { bodyWords, checkWorks, readPage, type Problem, type Probe } from "./checks.js";
 import { safeFetch, type Fetched } from "./fetcher.js";
 import { checkLook, type LookFlag } from "./look.js";
 import { checkCopy, type CopyFlag } from "./slop.js";
@@ -102,8 +102,8 @@ export function runCheck(url: string): Promise<Report> {
     if (page.status < 400 && type && !/html|xml/i.test(type)) throw new NotAPage(`that address serves ${type.split(";")[0]}, not a web page`);
     const parts = readPage(page.body.toString("utf8"), page.finalUrl);
     // An empty shell that JavaScript fills in: we would be scoring a blank page, and a blank page passes everything.
-    const words = (parts.blocks.join(" ").match(/[\p{L}\p{N}'’-]+/gu) ?? []).length;
-    if (words < 40 && parts.root.querySelectorAll("script").length > 0) {
+    // Short pages are fine (example.com is 30 words); a body with next to nothing in it and scripts to fill it is not.
+    if (bodyWords(page.body.toString("utf8")) < 15 && parts.root.querySelectorAll("script").length > 0) {
       throw new NotAPage("this page is drawn by JavaScript after it loads, and Ship Check reads the HTML only for now, so there is nothing fair to score");
     }
     return analyse(page, await loadCss(parts.stylesheetUrls));
