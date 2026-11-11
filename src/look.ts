@@ -11,10 +11,10 @@ import { Worker } from "node:worker_threads";
 const LINTER = fileURLToPath(new URL("../vendor/hallmark/sloplint.mjs", import.meta.url));
 const TIMEOUT_MS = 8000;
 
-const GATES: Record<string, { tell: string; weight: number; repeats?: boolean }> = {
+const GATES: Record<string, { tell: string; weight: number; repeats?: boolean; repeat?: number }> = {
   // cheap tells: what a page looks like when nobody designed it
   "3": { tell: "Three identical icon cards", weight: 14, repeats: true },
-  "30a": { tell: "Emoji used as an icon", weight: 14, repeats: true },
+  "30a": { tell: "Emoji used as an icon", weight: 8, repeats: true, repeat: 6 },
   "54": { tell: "Small label above every heading", weight: 8, repeats: true },
   "47a": { tell: "Hand-drawn browser window", weight: 8 },
   // imitated looks: designed sites have them too, generated sites have them all at once
@@ -96,20 +96,28 @@ export async function checkLook(html: string, stylesheets: string[]): Promise<Lo
     const findings = await runLinter(dir);
     const flags: LookFlag[] = [];
     const fakeSends: string[] = [];
-    const perGate = new Map<string, number>();
+    const perGate = new Map<string, Set<string>>();
     let points = 0;
     for (const f of findings) {
       if (f.gate === FAKE_SEND_GATE) {
         fakeSends.push(f.evidence);
         continue;
       }
-      const g = GATES[f.gate];
+      let g = GATES[f.gate];
       if (!g) continue;
       if (!inUse(f.evidence, html)) continue;
-      const seen = perGate.get(f.gate) ?? 0;
-      perGate.set(f.gate, seen + 1);
-      if (seen >= 3) continue;
-      points += seen === 0 ? g.weight : g.repeats ? g.weight / 4 : 0;
+      // Gate 3 covers several card habits. Only the row of identical icon tiles is the big tell.
+      if (f.gate === "3" && !/icon-tile|equal/i.test(f.evidence)) g = { tell: "Coloured stripe down the side of a box", weight: 3 };
+      // A step number ("01") over a heading is a list, not a label.
+      if (f.gate === "54" && /eyebrow "\d{1,3}"/.test(f.evidence)) continue;
+      // The same emoji twice is one habit; three different ones is a style.
+      const what = f.gate === "30a" ? (/\p{Emoji_Presentation}/u.exec(f.evidence)?.[0] ?? f.evidence) : f.evidence;
+      const key = `${f.gate}|${g.tell}`;
+      const prior = perGate.get(key) ?? new Set<string>();
+      perGate.set(key, prior);
+      if (prior.has(what) || prior.size >= 3) continue;
+      points += prior.size === 0 ? g.weight : g.repeats ? g.repeat ?? g.weight / 4 : 0;
+      prior.add(what);
       flags.push({ gate: f.gate, tell: g.tell, evidence: f.evidence.slice(0, 200), fix: f.fix.slice(0, 200) });
     }
     return { score: Math.min(100, Math.round(points)), flags, fakeSends };

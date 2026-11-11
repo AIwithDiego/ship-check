@@ -91,6 +91,13 @@ export function runCheck(url: string): Promise<Report> {
   if (hit && Date.now() - hit.at < CACHE_MS) return hit.report;
   const report = (async () => {
     const page = await safeFetch(url);
+    if (page.status >= 400) {
+      throw new NotAPage(
+        page.status === 404 || page.status === 410
+          ? `that address answers ${page.status}: there is no page there`
+          : `the site answered ${page.status} to our visit. It may refuse automated visitors, so there is nothing fair to score`,
+      );
+    }
     const type = String(page.headers["content-type"] ?? "");
     if (page.status < 400 && type && !/html|xml/i.test(type)) throw new NotAPage(`that address serves ${type.split(";")[0]}, not a web page`);
     const parts = readPage(page.body.toString("utf8"), page.finalUrl);

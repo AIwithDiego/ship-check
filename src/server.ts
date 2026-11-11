@@ -12,6 +12,7 @@ import { sendFile } from "./static.js";
 
 const PORT = Number(process.env.PORT) || 4950;
 const publicDir = fileURLToPath(new URL("../public", import.meta.url));
+const cut = (s: string) => (s.length > 130 ? `${s.slice(0, 127)}...` : s);
 const esc = (s: unknown) => String(s).replace(/[&<>"']/g, (ch) => `&#${ch.charCodeAt(0)};`);
 
 function page(file: string, base: string): string {
@@ -54,7 +55,7 @@ Send "name" and the site joins the public board at ${base}/live. Without it, the
 ## Limits
 
 ${NOTE}
-Nothing about the page is stored. The live screen keeps the last 20 results for 24 hours.
+The page is not stored. The live screen keeps the last 20 scores for 24 hours, and for checks that sent a name, the top three findings per round.
 `;
 }
 
@@ -186,6 +187,15 @@ app.post("/check", async (c) => {
     works: s.works,
     copy: s.copy,
     look: s.look,
+    ...(body.name
+      ? {
+          top: {
+            works: r.works.problems.filter((p) => p.serious).slice(0, 3).map((p) => cut(p.what)),
+            copy: r.copy.flags.slice(0, 3).map((f) => cut(`${f.tell}: "${f.line}"`)),
+            look: [...new Map(r.look.flags.map((f) => [f.tell, f])).values()].slice(0, 3).map((f) => cut(f.tell)),
+          },
+        }
+      : {}),
   });
   return res;
 });

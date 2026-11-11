@@ -73,5 +73,7 @@ describe("names for the big screen", () => {
     expect(boardName("<script>")).toBeNull();
     expect(boardName("x")).toBeNull();
     expect(boardName("f.u.c.k")).toBeNull();
+    expect(boardName("My App (v2)")).toBe("My App (v2)");
+    expect(boardName("f(u)c!k")).toBeNull();
   });
 });

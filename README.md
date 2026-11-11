@@ -54,7 +54,7 @@ Round 1 passes with nothing serious. Rounds 2 and 3 are a score from 0 to 100 an
 - **No browser yet.** It reads HTML and CSS. Text and buttons that only exist after JavaScript runs are not seen, and the report says so. Screenshots and console errors need a real browser in the cloud; that is the next step, not today's.
 - **Round 3 is the roughest.** Designed sites use gradients and glass too. Those count for little alone; the cheap tells (emoji icons, the three cards, the label over every heading) carry the score.
 - **Addresses from strangers.** Every request goes through one fetcher that only dials public addresses, checks the address at connect time, and checks again on every redirect (`src/fetcher.ts`).
-- **Nothing about the page is stored.** The live feed keeps the last 20 scores for 24 hours. A site's address appears on the board only when the caller gives a name for it.
+- **The page is not stored.** The live feed keeps the last 20 scores for 24 hours. A site's address and its top three findings per round appear on the board only when the caller gives a name for it.
 
 ## Design system
 

@@ -107,6 +107,8 @@ html,body{overflow-x:clip}
 .btn:disabled{filter:saturate(.3);cursor:progress}
 .btn--s{font-family:var(--hud);font-weight:700;font-size:1rem;min-height:2.75rem;padding:0 1rem;border-radius:10px;box-shadow:0 4px 0 var(--glove-700)}
 .btn--s:active{transform:translateY(3px);box-shadow:0 1px 0 var(--glove-700)}
+.btn--quiet{background:var(--ring-950);color:var(--tape-2);border:2px solid var(--line);box-shadow:none;font-weight:500}
+.btn--quiet:hover,.btn--quiet:active{box-shadow:none;transform:none;color:var(--tape)}
 
 /* fields and commands */
 .field{font:inherit;font-weight:500;color:var(--tape);background:var(--ring-950);border:2px solid var(--line);border-radius:14px;min-height:3.25rem;padding:0 1rem;width:100%;min-width:0}
@@ -128,7 +130,9 @@ html,body{overflow-x:clip}
 
 /* findings in a report */
 .finds{list-style:none;padding:0;display:grid;gap:.5rem}
-.finds li{border:2px solid var(--lose);background:var(--ring-950);border-radius:10px;padding:.5rem .8rem}
+.finds{margin:0}
+.finds li{border:2px solid var(--line);background:var(--ring-950);border-radius:10px;padding:.45rem .7rem;overflow-wrap:anywhere}
+.round[data-result="lose"] .finds li{border-color:var(--lose)}
 .finds li small{display:block;color:var(--tape-2)}
 
 .fine{color:var(--tape-3);font-size:.95rem}
@@ -136,3 +140,56 @@ html,body{overflow-x:clip}
 @keyframes land{from{transform:scale(1.5) rotate(-9deg);opacity:0}to{transform:scale(1) rotate(-3deg);opacity:1}}
 .call.is-new{animation:land 380ms cubic-bezier(.2,1.2,.3,1)}
 @media (prefers-reduced-motion:reduce){.call.is-new{animation:none}.btn,.meter i{transition:none}}
+
+/* the bout: the glove against the slop monster, played while a check runs */
+.arena{position:relative;height:clamp(14rem,36vw,21rem);border-radius:var(--r-card);overflow:hidden;border:2px solid var(--line);background:radial-gradient(40rem 14rem at 50% -4rem,rgba(111,208,255,.5),transparent 70%),linear-gradient(180deg,var(--ring-700) 0,var(--ring-900) 100%)}
+.arena[hidden]{display:none}
+.arena::before{content:"";position:absolute;left:0;right:0;top:26%;height:28%;opacity:.55;pointer-events:none;background:linear-gradient(180deg,var(--ring-950) 0,var(--ring-950) 7%,transparent 7%,transparent 46%,var(--ring-950) 46%,var(--ring-950) 53%,transparent 53%,transparent 93%,var(--ring-950) 93%)}
+.arena__floor{position:absolute;left:0;right:0;bottom:0;height:24%;background:linear-gradient(180deg,var(--ring-500),var(--ring-700));border-top:4px solid var(--ring-300)}
+.arena svg{display:block;width:100%;height:auto;overflow:visible}
+.arena__monster{position:absolute;left:16%;bottom:9%;width:clamp(7.5rem,24vw,13rem);transform-origin:50% 100%;filter:drop-shadow(0 .5rem .4rem rgba(2,10,24,.45))}
+.arena__glove{position:absolute;right:9%;bottom:24%;width:clamp(6.5rem,21vw,11.5rem);transform-origin:100% 50%;filter:drop-shadow(0 .5rem .4rem rgba(2,10,24,.45))}
+.arena__pow{position:absolute;left:14%;bottom:20%;width:clamp(8rem,26vw,14rem);opacity:0;display:grid;place-items:center;pointer-events:none}
+.arena__pow>*{grid-area:1/1}
+.arena__pow .block{font-size:clamp(1.6rem,5vw,3rem);color:var(--flame);--side:var(--flame-deep);--under:#4d0a02;transform:rotate(-8deg)}
+.arena__banner{position:absolute;left:0;right:0;top:6%;text-align:center;font-size:clamp(2rem,7vw,4.2rem);pointer-events:none;animation:arena-pop 420ms cubic-bezier(.2,1.4,.3,1) both}
+.arena__banner:empty{display:none}
+.arena__words{position:absolute;inset:0;pointer-events:none}
+.arena__word{position:absolute;left:calc(22% + var(--dx,0%));bottom:58%;background:var(--tape);color:var(--ink);font-weight:700;font-size:clamp(.8rem,1.6vw,1.05rem);padding:.2rem .7rem;border-radius:var(--r-pill);white-space:nowrap;box-shadow:0 3px 0 var(--tape-3);animation:arena-word 1500ms ease-out both}
+.arena .bout-x{display:none}
+
+.arena[data-state="bell"] .arena__monster{animation:arena-drop 620ms cubic-bezier(.3,1.5,.5,1) both}
+.arena[data-state="bell"] .arena__glove{animation:arena-in 520ms 180ms cubic-bezier(.2,1.2,.3,1) both}
+.arena[data-state="spar"] .arena__monster{animation:arena-wobble 700ms ease-in-out infinite}
+.arena[data-state="spar"] .arena__glove{animation:arena-jab 700ms cubic-bezier(.5,0,.3,1) infinite}
+.arena[data-state="spar"] .bout-sparks{animation:arena-twinkle 500ms steps(2) infinite}
+.arena[data-state="ko"]{animation:arena-shake 420ms 300ms linear}
+.arena[data-state="ko"] .arena__glove{animation:arena-smash 1500ms cubic-bezier(.3,0,.2,1) both}
+.arena[data-state="ko"] .arena__monster{animation:arena-fly 900ms 300ms cubic-bezier(.2,.6,.4,1) both}
+.arena[data-state="ko"] .arena__pow{animation:arena-pow 800ms 280ms ease-out both}
+.arena[data-state="ko"] .bout-x{display:block}
+.arena[data-state="ko"] .bout-pupils{display:none}
+.arena[data-state="lost"] .arena__monster{animation:arena-gloat 620ms ease-in-out infinite alternate;transform:scale(1.28)}
+.arena[data-state="lost"] .arena__glove{animation:arena-droop 700ms cubic-bezier(.3,0,.4,1) both}
+
+@keyframes arena-pop{from{transform:scale(.3) rotate(-8deg);opacity:0}to{transform:scale(1) rotate(-3deg);opacity:1}}
+@keyframes arena-drop{from{transform:translateY(-260%) scaleY(1.2)}70%{transform:translateY(0) scale(1.15,.82)}to{transform:none}}
+@keyframes arena-in{from{transform:translateX(220%) rotate(20deg)}to{transform:none}}
+@keyframes arena-wobble{0%,100%{transform:rotate(-3deg) scale(1,1)}30%{transform:rotate(4deg) scale(1.04,.96)}55%{transform:translateX(-7%) rotate(-9deg) scale(.95,1.05)}}
+@keyframes arena-jab{0%,100%{transform:none}35%{transform:translateX(10%) rotate(6deg)}50%{transform:translateX(-78%) rotate(-4deg)}62%{transform:translateX(-60%)}}
+@keyframes arena-twinkle{from{opacity:1}to{opacity:.25}}
+@keyframes arena-smash{0%{transform:none}16%{transform:translateX(26%) rotate(14deg) scale(.95)}22%{transform:translateX(-128%) rotate(-8deg) scale(1.3)}34%{transform:translateX(-112%) rotate(-4deg) scale(1.25)}60%{transform:translateX(-40%) translateY(-34%) rotate(-58deg) scale(1.15)}100%{transform:translateX(-40%) translateY(-40%) rotate(-64deg) scale(1.15)}}
+@keyframes arena-fly{0%{transform:none;opacity:1}18%{transform:translate(-18%,-6%) rotate(-24deg) scale(.86,1.16)}100%{transform:translate(-190%,-170%) rotate(-760deg) scale(.25);opacity:0}}
+@keyframes arena-pow{0%{opacity:0;transform:scale(.2) rotate(-20deg)}18%{opacity:1;transform:scale(1.25) rotate(6deg)}70%{opacity:1;transform:scale(1.05)}100%{opacity:0;transform:scale(1.4)}}
+@keyframes arena-shake{0%,100%{transform:none}20%{transform:translate(-8px,4px)}40%{transform:translate(7px,-5px)}60%{transform:translate(-5px,-3px)}80%{transform:translate(4px,3px)}}
+@keyframes arena-gloat{from{transform:scale(1.28) rotate(-4deg)}to{transform:scale(1.36,1.22) rotate(4deg) translateY(-3%)}}
+@keyframes arena-droop{to{transform:translateY(46%) rotate(78deg);filter:grayscale(.7) brightness(.7)}}
+@keyframes arena-word{0%{opacity:0;transform:translateY(40%) scale(.5) rotate(var(--tilt,0deg))}18%{opacity:1;transform:translateY(-30%) scale(1) rotate(var(--tilt,0deg))}100%{opacity:0;transform:translateY(-260%) rotate(var(--tilt,0deg))}}
+
+/* the bout over the whole screen, for the room */
+.arena--over{position:fixed;inset:0;height:auto;z-index:20;border:0;border-radius:0}
+.arena--over .arena__monster{width:clamp(12rem,26vw,26rem);left:20%}
+.arena--over .arena__glove{width:clamp(10rem,22vw,22rem);right:14%}
+.arena--over .arena__pow{width:clamp(13rem,28vw,28rem);left:17%}
+.arena--over .arena__banner{font-size:clamp(3.5rem,11vw,10rem)}
+.arena--over .arena__word{font-size:clamp(1rem,2vw,1.8rem)}
