@@ -12,7 +12,7 @@ import { sendFile } from "./static.js";
 
 const PORT = Number(process.env.PORT) || 4950;
 const publicDir = fileURLToPath(new URL("../public", import.meta.url));
-const cut = (s: string) => (s.length > 130 ? `${s.slice(0, 127)}...` : s);
+const cut = (s: string) => (s.length > 110 ? `${s.slice(0, 107)}...` : s);
 const esc = (s: unknown) => String(s).replace(/[&<>"']/g, (ch) => `&#${ch.charCodeAt(0)};`);
 
 function page(file: string, base: string): string {
@@ -190,8 +190,8 @@ app.post("/check", async (c) => {
     ...(body.name
       ? {
           top: {
-            works: r.works.problems.filter((p) => p.serious).slice(0, 3).map((p) => cut(p.what)),
-            copy: r.copy.flags.slice(0, 3).map((f) => cut(`${f.tell}: "${f.line}"`)),
+            works: r.works.problems.filter((p) => p.serious).slice(0, 2).map((p) => cut(p.what)),
+            copy: [...new Map(r.copy.flags.map((f) => [f.line, f])).values()].slice(0, 2).map((f) => cut(`${f.tell}: "${f.line}"`)),
             look: [...new Map(r.look.flags.map((f) => [f.tell, f])).values()].slice(0, 3).map((f) => cut(f.tell)),
           },
         }
