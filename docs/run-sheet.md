@@ -31,6 +31,21 @@ The glove knocks the monster out. SHIP IT. Bean There moves to the top of the fi
 
 **4. The room (45 s).** Point at the QR code. "Free score on your phone right now. If you want the report and a place on the card, your agent pays 60 cents of test money. Lowest points wins."
 
+## If you want the payments in the Stripe dashboard
+
+The prompts above pay with stablecoin on the Tempo testnet. The money moves and the receipt is real, but this sandbox does not have the crypto payment method switched on, so Stripe cannot record those payments and the dashboard shows a failed `POST /v1/payment_intents` for each one.
+
+Two ways to get dashboard rows:
+
+- **Pay by test card instead.** Run this in the terminal yourself (it reads the sandbox key from the Keychain, nothing is printed):
+
+```
+MPPX_STRIPE_SECRET_KEY=$(security find-generic-password -s stripe-sandbox-secret -w) npx mppx@0.17.1 https://ship-check-peach.vercel.app/check -J '{"url":"https://ship-check-peach.vercel.app/demo/before","name":"Bean There"}' --currency usd -M paymentMethod=pm_card_visa
+```
+
+  Swap `before` for `after` for the second check. Each one shows as a 0.60 USD succeeded payment.
+- **Switch crypto on** in the sandbox: Stripe dashboard, Settings, Payment methods, enable Crypto (stablecoin payments). Then the testnet payments record too.
+
 ## If something breaks
 
 | What | Do this |
