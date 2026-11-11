@@ -215,22 +215,27 @@ export async function checkWorks(page: Fetched, parts: PageParts, probe: Probe =
     const j = jobs[i];
     if (!r) return;
     if (j.kind === "link") checked++;
-    if ("error" in r) {
-      if (r.error === "blocked") return;
-      add({
-        kind: j.kind,
-        serious: j.kind !== "link" || new URL(j.url).host === new URL(base).host,
-        what: j.kind === "link" ? `"${j.text}" leads to a site that does not answer` : `${j.text === "image" ? "An" : "A"} ${j.text} does not load`,
-        where: j.url,
-        fix: j.kind === "link" ? "Check the address." : "Fix the path or upload the file.",
-      });
-    } else if (r.status === 404 || r.status === 410 || r.status >= 500) {
+    // Only a clear "not there" is called broken. No answer or a server error can be
+    // the other side refusing our server, so it is reported as unverified.
+    const gone = !("error" in r) && (r.status === 404 || r.status === 410);
+    const unsure = "error" in r ? r.error !== "blocked" : r.status >= 500;
+    const an = j.text === "image" ? "An" : "A";
+    if (gone) {
+      const status = (r as { status: number }).status;
       add({
         kind: j.kind,
         serious: true,
-        what: j.kind === "link" ? `"${j.text}" leads to a page that answers ${r.status}` : `${j.text === "image" ? "An" : "A"} ${j.text} answers ${r.status}`,
+        what: j.kind === "link" ? `"${j.text}" leads to a page that answers ${status}` : `${an} ${j.text} answers ${status}`,
         where: j.url,
         fix: j.kind === "link" ? "Fix the address or publish the page." : "Fix the path or upload the file. This shows up as a console error.",
+      });
+    } else if (unsure) {
+      add({
+        kind: j.kind,
+        serious: false,
+        what: j.kind === "link" ? `Could not verify where "${j.text}" leads: no clear answer from that address` : `Could not verify ${an.toLowerCase()} ${j.text}: no clear answer`,
+        where: j.url,
+        fix: "Open it yourself. Some sites refuse automated visits.",
       });
     }
   });
