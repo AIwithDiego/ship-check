@@ -8,3 +8,6 @@
 - Round 3 runs the static gates of Hallmark's sloplint (MIT, Together AI), keeping the gates that are tells on any site.
 - Fetching is locked down: public addresses only, checked at connect time and again on every redirect.
 - Live screen at `/live` with an opt-in board. Fight-night design system at `/design`.
+- The bout: ringing the bell starts a fight between the glove and the slop monster while the check runs. A pass is a knockout, a fail leaves the monster standing. Full screen on the live screen when a paid check lands.
+- Named checks show their top three findings per round on the live screen, with a QR code to the home page.
+- Pages that answer 4xx or 5xx to our visit are refused before payment. Look round calibrated on sixteen well-known sites.
