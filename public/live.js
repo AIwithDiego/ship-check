@@ -15,7 +15,7 @@
   function finds(id, list) {
     var ul = $(id).querySelector(".finds");
     ul.textContent = "";
-    (list || []).forEach(function (t) { var li = document.createElement("li"); li.textContent = t; ul.append(li); });
+    (list || []).forEach(function (t) { var li = document.createElement("li"), sp = document.createElement("span"); sp.textContent = t; li.append(sp); ul.append(li); });
   }
   function chip(pass, text) {
     var c = document.createElement("span"); c.className = "chip"; c.dataset.result = pass ? "win" : "lose"; c.textContent = text; return c;

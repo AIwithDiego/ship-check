@@ -29,7 +29,7 @@ main{max-width:112rem;margin:0 auto;padding:1.5rem clamp(1rem,3vw,3rem) 2rem;dis
 .bout .rounds{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:60rem){.bout .rounds{grid-template-columns:minmax(0,1fr)}}
 /* one screen, whatever its height: the payment line sits above the rounds, and a short screen drops detail instead of cutting it */
-.bout .finds li{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.bout .finds li span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .join{padding:.9rem 1.2rem}
 @media (min-width:60rem){
   .bout{grid-template-rows:auto auto minmax(0,1fr)}
@@ -47,7 +47,8 @@ main{max-width:112rem;margin:0 auto;padding:1.5rem clamp(1rem,3vw,3rem) 2rem;dis
   .bout .round__score{font-size:clamp(2.2rem,7vh,3.6rem)}
   .bout .round__name{font-size:clamp(1rem,2.6vh,1.3rem)}
   .bout .meter{display:none}
-  .bout .finds li{-webkit-line-clamp:2;font-size:.85rem;padding:.3rem .55rem}
+  .bout .finds li{font-size:.85rem;padding:.3rem .55rem}
+  .bout .finds li span{-webkit-line-clamp:2}
   .qr{width:84px;height:84px}
   .join{font-size:.95rem}
 }
