@@ -15,3 +15,5 @@ npm run dev
 ```
 
 Rules live in `src/slop.ts` (copy), `src/look.ts` (which Hallmark gates count, and how much) and `src/checks.ts` (works). Read `AGENTS.md` before sending a pull request.
+
+The GitHub Pages replay in `docs/demo` is generated: after changing anything in `public/` or the rules, run `npx tsx scripts/build-demo.mts`. Only `docs/demo/index.html` is written by hand.

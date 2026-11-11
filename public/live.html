@@ -16,9 +16,10 @@ main{max-width:112rem;margin:0 auto;padding:1.5rem clamp(1rem,3vw,3rem) 2rem;dis
 .board{grid-area:card;display:grid;gap:.9rem;align-content:start}
 .join{grid-area:join;display:flex;gap:1.4rem;align-items:center}
 .qr{border-radius:10px;border:6px solid var(--tape);background:var(--tape);flex:none}
-.bouthead{display:flex;gap:1.2rem;align-items:center;justify-content:space-between;flex-wrap:wrap;min-height:7rem}
+.bouthead{display:flex;gap:1.2rem;align-items:center;justify-content:space-between;min-height:7rem}
+.bout .call{flex:none;font-size:clamp(3rem,6.2vw,6.5rem)}
 .idle{font-size:clamp(1.4rem,2.4vw,2.2rem);font-weight:700;color:var(--tape-2);text-wrap:balance}
-.who{font-size:clamp(1.3rem,2.2vw,2rem)}
+.who{font-size:clamp(1.1rem,1.7vw,1.7rem);display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bout .round__score{font-size:clamp(3rem,4.6vw,4.8rem);white-space:nowrap}
 .bout .round__score small{font-size:.95rem}
 @media (min-width:60rem){main{height:100vh;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}.bout,.board{min-height:0;overflow:hidden}}

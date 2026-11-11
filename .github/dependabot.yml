@@ -1,0 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    ignore:
+      # mppx is pinned on purpose (the paying client and the server must match)
+      - dependency-name: mppx
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

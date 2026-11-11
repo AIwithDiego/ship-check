@@ -11,3 +11,6 @@
 - The bout: ringing the bell starts a fight between the glove and the slop monster while the check runs. A pass is a knockout, a fail leaves the monster standing. Full screen on the live screen when a paid check lands.
 - Named checks show their top three findings per round on the live screen, with a QR code to the home page.
 - Pages that answer 4xx or 5xx to our visit are refused before payment. Look round calibrated on sixteen well-known sites.
+- A page that is an empty shell until JavaScript runs is refused before payment instead of being scored blank.
+- Static replay on GitHub Pages (`docs/demo`, rebuilt with `scripts/build-demo.mts` from the real engine): the two demo pages with their full reports, the live screen and the design system.
+- Repo public: cover, demo GIF, issue templates, dependabot.
