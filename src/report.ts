@@ -52,9 +52,17 @@ export async function analyse(page: Fetched, css: string[], probe?: Probe): Prom
   const parts = readPage(html, page.finalUrl);
   const [works, look] = await Promise.all([checkWorks(page, parts, probe), checkLook(html, css)]);
   const copy = checkCopy(parts.blocks, parts.htmlLang);
+  // "Thanks" with no request behind it is only knowable when all the page's script is
+  // in the page. With script files we cannot see, it is a thing to verify, not a failure.
+  const outside = parts.root.querySelectorAll("script").some((x) => x.getAttribute("src"));
   for (const evidence of look.fakeSends) {
-    works.problems.unshift({ kind: "form", serious: true, what: "A form says thanks without sending anything", where: evidence.slice(0, 160), fix: "Send the answers somewhere before showing success." });
-    works.serious++;
+    if (outside) {
+      works.problems.push({ kind: "form", serious: false, what: "Could not verify that a form sends its answers", where: evidence.slice(0, 160), fix: "Submit it yourself and check the answer arrives." });
+      works.minor++;
+    } else {
+      works.problems.unshift({ kind: "form", serious: true, what: "A form says thanks without sending anything", where: evidence.slice(0, 160), fix: "Send the answers somewhere before showing success." });
+      works.serious++;
+    }
   }
   const w = works.serious === 0;
   const c = copy.score < PASS_BELOW;
