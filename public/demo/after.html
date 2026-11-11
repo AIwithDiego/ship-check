@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bean There: coffee on Capel Street, Dublin</title>
+<meta name="description" content="Bean There is a coffee shop at 14 Capel Street, Dublin 1. Open 7:30 to 17:00 on weekdays, 9:00 to 16:00 at weekends. Book a table for up to six.">
+<style>
+:root{--paper:oklch(96% 0.012 80);--ink:oklch(24% 0.02 50);--bean:oklch(42% 0.09 45);--line:oklch(84% 0.02 70);--display:Georgia,"Times New Roman",serif;--body:Verdana,Geneva,sans-serif}
+html,body{overflow-x:clip}
+body{margin:0;font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.55}
+.wrap{max-width:44rem;margin:0 auto;padding:0 20px}
+header{padding:28px 0;display:flex;gap:20px;align-items:baseline;flex-wrap:wrap}
+header strong{font-family:var(--display);font-size:26px;margin-right:auto}
+a{color:var(--bean)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+h1{font-family:var(--display);font-size:clamp(38px,7vw,62px);line-height:1.08;margin:48px 0 20px;text-wrap:balance}
+h2{font-family:var(--display);font-size:30px;margin:64px 0 12px}
+.book{display:inline-block;background:var(--bean);color:var(--paper);padding:14px 22px;border-radius:6px;text-decoration:none;font-weight:700}
+table{border-collapse:collapse;width:100%}
+td{padding:10px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right}
+label{display:block;margin:14px 0 6px}
+input{font:inherit;padding:12px;border:1px solid var(--ink);border-radius:6px;width:100%;box-sizing:border-box;background:var(--paper);color:var(--ink)}
+button{font:inherit;font-weight:700;margin-top:16px;background:var(--ink);color:var(--paper);border:0;border-radius:6px;padding:14px 22px}
+footer{margin:72px 0 40px;padding-top:20px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <strong>Bean There</strong>
+  <a href="#menu">Menu</a>
+  <a href="#hours">Hours</a>
+  <a href="#book">Book a table</a>
+</header>
+<main>
+  <h1>We roast on Mondays and it is gone by Friday.</h1>
+  <p>Bean There is a twelve-seat coffee shop at 14 Capel Street. One roaster, two grinders, and a flat white that people cross the river for. Come in, or book the big table for up to six.</p>
+  <p><a class="book" href="#book">Book the big table</a></p>
+
+  <h2 id="menu">What we pour</h2>
+  <table>
+    <tr><td>Flat white</td><td>€3.80</td></tr>
+    <tr><td>Filter, whatever is on</td><td>€3.20</td></tr>
+    <tr><td>Espresso</td><td>€2.90</td></tr>
+    <tr><td>Cinnamon bun, baked at 7</td><td>€4.00</td></tr>
+  </table>
+
+  <h2 id="hours">When we are open</h2>
+  <p>Monday to Friday, 7:30 to 17:00. Saturday and Sunday, 9:00 to 16:00. The buns run out around 11.</p>
+
+  <h2 id="book">Book the big table</h2>
+  <p>It seats six. Tell us when, and we will email you back within the hour while we are open.</p>
+  <form action="https://formspree.io/f/demo" method="post">
+    <label for="when">Day and time</label>
+    <input id="when" name="when" required>
+    <label for="email">Your email</label>
+    <input id="email" name="email" type="email" required>
+    <button type="submit">Ask for the table</button>
+  </form>
+</main>
+<footer>Bean There, 14 Capel Street, Dublin 1. <a href="mailto:hello@beanthere.example">hello@beanthere.example</a></footer>
+</div>
+</body>
+</html>

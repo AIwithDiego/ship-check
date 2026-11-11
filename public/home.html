@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ship Check: the last check before a human sees your website</title>
+<meta name="description" content="Your agent sends a URL and pays {{PRICE}} USD. Ship Check answers in three rounds: does it work, does the copy sound machine-written, does the design look machine-made.">
+<link rel="stylesheet" href="/public/ds.css">
+<style>
+main{max-width:60rem;margin:0 auto;padding:3rem 1.25rem 5rem;display:grid;gap:3.5rem}
+.top{display:grid;gap:1.6rem;justify-items:center;text-align:center;--rope-top:7rem}
+.lede{font-size:clamp(1.25rem,2.6vw,1.6rem);font-weight:700;max-width:36rem;text-wrap:balance}
+.try{display:grid;gap:1rem}
+.try form{display:flex;gap:.7rem;flex-wrap:wrap}
+.try form .field{flex:1 1 16rem}
+#out{display:grid;gap:1.2rem}
+#out[hidden]{display:none}
+.outhead{display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;justify-content:space-between}
+section{display:grid;gap:1.1rem}
+ol.steps{padding-left:1.4rem;display:grid;gap:1.1rem}
+ol.steps li::marker{font-family:var(--block);color:var(--glove-500)}
+ol.steps li>span{display:block;margin-bottom:.5rem}
+</style>
+</head>
+<body class="ring">
+<main>
+  <header class="top ropes">
+    <div class="marquee">
+      <div class="marquee__stars" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z"/></svg>
+      </div>
+      <h1 class="block marquee__block">SHIP<span class="sr"> Check</span></h1>
+      <p class="neon marquee__neon" aria-hidden="true">check</p>
+    </div>
+    <p class="lede">The last check before a human sees your website. Three rounds, {{PRICE}} USD, paid by your agent.</p>
+    <p><a class="btn" href="#try">Score a site for free</a></p>
+  </header>
+
+  <section class="try panel panel--hot" id="try">
+    <h2 class="head">Put a site in the ring</h2>
+    <p class="sub">The score is free. Your agent pays for the full report: every broken thing, every flagged line, and the fix.</p>
+    <form id="f">
+      <label class="sr" for="u">Website address</label>
+      <input class="field" id="u" name="url" type="url" inputmode="url" autocomplete="url" placeholder="https://your-site.com" required>
+      <button class="btn" id="go" type="submit">Ring the bell</button>
+    </form>
+    <p class="fine" id="msg" role="status"></p>
+    <div id="out" hidden>
+      <div class="outhead">
+        <span class="block call" id="call"></span>
+        <span class="tape" id="host"></span>
+      </div>
+      <div class="rounds">
+        <article class="round" id="r1"><span class="round__no">Round 1</span><h3 class="round__name">Does it work</h3><p class="round__score"></p><div class="meter"><i></i></div><p class="round__says"></p></article>
+        <article class="round" id="r2"><span class="round__no">Round 2</span><h3 class="round__name">Does it sound like a machine</h3><p class="round__score"></p><div class="meter"><i></i></div><p class="round__says"></p></article>
+        <article class="round" id="r3"><span class="round__no">Round 3</span><h3 class="round__name">Does it look like one</h3><p class="round__score"></p><div class="meter"><i></i></div><p class="round__says"></p></article>
+      </div>
+      <p class="sub">Want to know which lines and which buttons? Hand it to your agent, below.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">Your agent pays, fixes and checks again</h2>
+    <p class="sub">This is an API for AI agents. Claude Code, Cursor, Codex or any agent that can run a command reads the instructions, pays over Stripe's Machine Payments Protocol and gets the report with a receipt.</p>
+    <ol class="steps">
+      <li><span>Make a test wallet with free test money. Run this in your terminal:</span>
+        <div class="cmd"><pre id="c1">npx mppx@0.17.1 account create -a me && npx mppx@0.17.1 account fund -a me --network testnet</pre><button class="btn btn--s" type="button" data-copy="c1">Copy</button></div></li>
+      <li><span>Paste this to your agent, with your own address and a name for the board:</span>
+        <div class="cmd"><pre id="c2">Read {{BASE}}/llms.txt and run Ship Check on https://your-site.com with the name "Your Project". Pay with: npx mppx@0.17.1 &lt;url&gt; -a me --network testnet. Fix what it finds, deploy, and check again until it says ship.</pre><button class="btn btn--s" type="button" data-copy="c2">Copy</button></div></li>
+      <li><span>Watch your site climb the <a href="/live">fight card</a>.</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2 class="head">Three rounds, same answer every time</h2>
+    <div class="rounds">
+      <article class="round"><span class="round__no">Round 1</span><h3 class="round__name">Does it work</h3><p class="round__says">Broken links, images and files. Buttons and forms that go nowhere. The basics a phone needs.</p></article>
+      <article class="round"><span class="round__no">Round 2</span><h3 class="round__name">Does it sound like a machine</h3><p class="round__says">The tells of generated copy, in English and Spanish. Each flag quotes the line and names the habit.</p></article>
+      <article class="round"><span class="round__no">Round 3</span><h3 class="round__name">Does it look like one</h3><p class="round__says">The tells of generated design: the purple gradient, the emoji icons, the three matching cards.</p></article>
+    </div>
+    <p class="sub">No model reads your page. It is rules, so the same page gets the same score, and every finding points at the thing it found. See it on a <a href="/demo/before">page that loses</a> and the <a href="/demo/after">same page fixed</a>.</p>
+  </section>
+
+  <footer class="fine">
+    <p>Ship Check says what reads as machine-made and why. It never says who made it. It reads the page's HTML and CSS and does not run it in a browser yet. Nothing about your page is stored; the fight card keeps the last results for 24 hours.</p>
+    <p><a href="/llms.txt">How an agent uses it</a>, <a href="/openapi.json">the API</a>, <a href="/live">the fight card</a>, <a href="/design">the design system</a>. Round 3 runs on <a href="https://github.com/nutlope/hallmark">Hallmark</a>'s gates (MIT, Together AI). Built at Agentic Dev Day Dublin, 11 November 2026, by Diego Bauer of AIwithDiego.</p>
+  </footer>
+</main>
+<script>
+(function () {
+  var f = document.getElementById("f"), msg = document.getElementById("msg"), out = document.getElementById("out"), go = document.getElementById("go");
+  function round(id, pass, score, unit, says) {
+    var el = document.getElementById(id);
+    el.dataset.result = pass ? "win" : "lose";
+    el.querySelector(".round__score").innerHTML = "";
+    el.querySelector(".round__score").append(String(score));
+    var s = document.createElement("small"); s.textContent = unit; el.querySelector(".round__score").append(s);
+    el.querySelector(".meter i").style.setProperty("--v", Math.max(4, Math.min(100, unit === "serious" ? score * 12 : score)) + "%");
+    el.querySelector(".round__says").textContent = says;
+  }
+  f.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var url = document.getElementById("u").value.trim();
+    if (url && !/^https?:\/\//i.test(url)) url = "https://" + url;
+    go.disabled = true; msg.textContent = "In the ring. This takes a few seconds.";
+    fetch("/score", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ url: url }) })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (x) {
+        go.disabled = false;
+        if (!x.ok) { msg.textContent = "Not checked: " + (x.j.error || "something went wrong") + "."; out.hidden = true; return; }
+        var j = x.j; msg.textContent = "";
+        var call = document.getElementById("call");
+        call.textContent = j.ship ? "SHIP IT" : "FIX FIRST";
+        call.className = "block call is-new " + (j.ship ? "block--win" : "block--lose");
+        document.getElementById("host").textContent = new URL(j.url).host;
+        round("r1", j.works.pass, j.works.serious, "serious", j.works.pass ? "Nothing broken that we can see." + (j.works.minor ? " " + j.works.minor + " small thing(s) to tidy." : "") : j.works.serious + " thing(s) a visitor would hit, " + j.works.minor + " small.");
+        round("r2", j.copy.pass, j.copy.score, "/ 100 slop", j.copy.flags + " line(s) flagged. Under 30 passes.");
+        round("r3", j.look.pass, j.look.score, "/ 100 slop", j.look.flags + " tell(s) flagged. Under 30 passes.");
+        out.hidden = false;
+      })
+      .catch(function () { go.disabled = false; msg.textContent = "Not checked: the request did not get through."; });
+  });
+  document.querySelectorAll("[data-copy]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      navigator.clipboard.writeText(document.getElementById(b.getAttribute("data-copy")).textContent).then(function () { b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy"; }, 1500); });
+    });
+  });
+})();
+</script>
+</body>
+</html>

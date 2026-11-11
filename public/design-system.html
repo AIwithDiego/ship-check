@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ship Check design system: fight night</title>
+<meta name="description" content="The tokens and parts every Ship Check page is built from: a blue ring, orange block letters, one line of neon script.">
+<link rel="stylesheet" href="/public/ds.css">
+<style>
+main{max-width:66rem;margin:0 auto;padding:3rem 1.25rem 5rem;display:grid;gap:3.5rem}
+section{display:grid;gap:1.2rem}
+.sw{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr))}
+.sw div{border-radius:14px;border:2px solid var(--line);overflow:hidden;background:var(--panel)}
+.sw i{display:block;height:4.5rem;background:var(--c)}
+.sw span{display:block;padding:.5rem .7rem;font-size:.9rem}
+.sw code{display:block;color:var(--tape-3);font-size:.8rem}
+.row{display:flex;gap:1.2rem;flex-wrap:wrap;align-items:center}
+.type{display:grid;gap:1.4rem}
+.type p{color:var(--tape-3);font-size:.95rem}
+.big{font-size:clamp(3rem,10vw,6rem)}
+.neonbig{font-size:clamp(2.4rem,7vw,4.4rem);margin-left:.6rem}
+.rules{padding-left:1.3rem;display:grid;gap:.5rem}
+</style>
+</head>
+<body class="ring">
+<main>
+  <header class="ropes" style="--rope-top:1rem">
+    <div class="marquee marquee--s" style="justify-items:start;text-align:left">
+      <h1 class="block marquee__block">FIGHT NIGHT</h1>
+      <p class="neon marquee__neon" aria-hidden="true">the system</p>
+    </div>
+    <p class="sub" style="margin-top:1.5rem;max-width:40rem">A site goes in the ring and comes out with a call. Everything on a Ship Check page is one of the parts below, drawn from the tokens in <a href="/public/ds.css">ds.css</a>.</p>
+  </header>
+
+  <section>
+    <h2 class="head">Colour</h2>
+    <p class="sub">The ring is the page. The gloves are for the name and for things you press. Neon means a round won, flame means a round lost. Nothing else gets a colour.</p>
+    <div class="sw">
+      <div style="--c:var(--ring-950)"><i></i><span>Ring 950<code>--ring-950</code></span></div>
+      <div style="--c:var(--ring-900)"><i></i><span>Ring 900<code>--ring-900</code></span></div>
+      <div style="--c:var(--ring-800)"><i></i><span>Ring 800<code>--ring-800</code></span></div>
+      <div style="--c:var(--ring-700)"><i></i><span>Ring 700<code>--ring-700</code></span></div>
+      <div style="--c:var(--ring-500)"><i></i><span>Ring 500<code>--ring-500</code></span></div>
+      <div style="--c:var(--ring-300)"><i></i><span>Ring 300<code>--ring-300</code></span></div>
+      <div style="--c:var(--glove-300)"><i></i><span>Glove 300<code>--glove-300</code></span></div>
+      <div style="--c:var(--glove-500)"><i></i><span>Glove 500<code>--glove-500</code></span></div>
+      <div style="--c:var(--glove-700)"><i></i><span>Glove 700<code>--glove-700</code></span></div>
+      <div style="--c:var(--neon)"><i></i><span>Neon, a win<code>--neon</code></span></div>
+      <div style="--c:var(--flame)"><i></i><span>Flame, a loss<code>--flame</code></span></div>
+      <div style="--c:var(--tape)"><i></i><span>Tape<code>--tape</code></span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">Type</h2>
+    <div class="type">
+      <div><span class="block big">SHIP IT</span><p>Block: Titan One. The name, the call, the scores and the headings. A darker side and a shadow under it, never a gradient.</p></div>
+      <div><span class="neon neonbig">check</span><p>Neon: Mr Dafoe. One word per page, tilted five degrees, tucked under the block word.</p></div>
+      <div><span style="font-weight:700;font-size:1.5rem">Round 2: does it sound like a machine</span><br><span>Tape: Chakra Petch 500 and 700. Everything you read.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">The call</h2>
+    <div class="row">
+      <span class="block call block--win">SHIP IT</span>
+      <span class="block call block--lose">FIX FIRST</span>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">Rounds</h2>
+    <div class="rounds">
+      <article class="round" data-result="win"><span class="round__no">Round 1</span><h3 class="round__name">Does it work</h3><p class="round__score">0<small>broken</small></p><div class="meter"><i style="--v:4%"></i></div><p class="round__says">Nothing a visitor would hit.</p></article>
+      <article class="round" data-result="lose"><span class="round__no">Round 2</span><h3 class="round__name">Sounds like a machine</h3><p class="round__score">82<small>/ 100</small></p><div class="meter"><i style="--v:82%"></i></div><p class="round__says">19 lines flagged.</p></article>
+      <article class="round"><span class="round__no">Round 3</span><h3 class="round__name">Looks like one</h3><p class="round__says">Before the bell: no result, no colour.</p></article>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="head">Things you press</h2>
+    <div class="row">
+      <button class="btn" type="button">Ring the bell</button>
+      <button class="btn btn--s" type="button">Copy</button>
+      <span class="tape"><span>Checks paid</span> <b>12</b></span>
+    </div>
+    <label class="sr" for="demo">A field</label>
+    <input class="field" id="demo" placeholder="https://your-site.com">
+    <div class="cmd"><pre>npx mppx@0.17.1 account create -a me</pre><button class="btn btn--s" type="button">Copy</button></div>
+  </section>
+
+  <section>
+    <h2 class="head">The fight card</h2>
+    <ol class="card">
+      <li data-ship="true"><span class="card__rank">1</span><span class="card__name">Bean There<span class="card__host">beanthere.example, 12 points</span></span><span class="chips"><span class="chip" data-result="win">0</span><span class="chip" data-result="win">8</span><span class="chip" data-result="win">4</span></span></li>
+      <li data-ship="false"><span class="card__rank">2</span><span class="card__name">Nexus Flow<span class="card__host">nexusflow.example, 187 points</span></span><span class="chips"><span class="chip">3</span><span class="chip">71</span><span class="chip">41</span></span></li>
+    </ol>
+    <p class="sub">Three chips, one per round: broken things, copy score, look score.</p>
+  </section>
+
+  <section>
+    <h2 class="head">House rules</h2>
+    <ul class="rules">
+      <li>Every Ship Check page passes Ship Check. That is why there is no gradient text, no coloured word inside a heading and no glass.</li>
+      <li>One block word and one neon word per page.</li>
+      <li>Colour means a result. A round with no result has no colour.</li>
+      <li>No emoji, no icons standing in for words.</li>
+      <li>Motion: the call lands once. Nothing else moves, and with reduced motion nothing does.</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>

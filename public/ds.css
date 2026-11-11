@@ -1,0 +1,138 @@
+/* Ship Check design system: fight night. A blue ring under the lights, chunky
+   orange block letters, one line of neon script. Tokens first, then parts. */
+@font-face{font-family:"Titan One";src:url("/public/fonts/titan-one.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Mr Dafoe";src:url("/public/fonts/mr-dafoe.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Chakra Petch";font-weight:500;src:url("/public/fonts/chakra-petch-500.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Chakra Petch";font-weight:700;src:url("/public/fonts/chakra-petch-700.woff2") format("woff2");font-display:swap}
+
+:root{
+  /* the ring */
+  --ring-950:#051226;--ring-900:#08203f;--ring-800:#0c3263;--ring-700:#11488c;--ring-500:#1f86dc;--ring-300:#6fd0ff;
+  /* the gloves */
+  --glove-300:#ffc46b;--glove-500:#ff8f1f;--glove-700:#c9570a;--glove-900:#6e2a04;
+  /* the lights */
+  --neon:#8ff6ff;--flame:#ff4a32;--flame-deep:#8f1607;
+  /* the tape */
+  --tape:#eef5ff;--tape-2:#b9cbe6;--tape-3:#7f97bb;--ink:#06162b;
+  --win:var(--neon);--lose:var(--flame);
+  --block:"Titan One","Arial Black",sans-serif;
+  --script:"Mr Dafoe","Brush Script MT",cursive;
+  --hud:"Chakra Petch","Trebuchet MS",sans-serif;
+  --r-pill:999px;--r-card:18px;--r-chip:8px;
+  --line:rgba(143,246,255,.22);
+  --panel:#071a36;
+  --t:160ms;
+}
+
+html,body{overflow-x:clip}
+.ring,.ring *,.ring *::before,.ring *::after{box-sizing:border-box}
+.ring{
+  margin:0;min-height:100vh;color:var(--tape);font-family:var(--hud);font-weight:500;font-size:19px;line-height:1.5;
+  background:
+    radial-gradient(60rem 26rem at 50% -6rem,rgba(111,208,255,.38),transparent 70%),
+    radial-gradient(16rem 16rem at 12% 22%,rgba(111,208,255,.16),transparent 70%),
+    radial-gradient(12rem 12rem at 86% 14%,rgba(111,208,255,.14),transparent 70%),
+    radial-gradient(9rem 9rem at 72% 38%,rgba(111,208,255,.08),transparent 70%),
+    linear-gradient(180deg,var(--ring-700) 0,var(--ring-800) 34rem,var(--ring-900) 60rem,var(--ring-950) 100%);
+  background-color:var(--ring-950);
+}
+.ring :where(h1,h2,h3,p,ol,ul,figure){margin:0}
+.ring a{color:var(--neon);text-underline-offset:3px}
+.ring :focus-visible{outline:3px solid var(--neon);outline-offset:3px}
+.ring ::selection{background:var(--glove-500);color:var(--ink)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+
+/* ropes: three lines across the top of a stage, like the ring behind the title */
+.ropes{position:relative}
+.ropes::before{content:"";position:absolute;left:0;right:0;top:var(--rope-top,9rem);height:8.5rem;pointer-events:none;opacity:.5;
+  background:linear-gradient(180deg,transparent 0,transparent .1rem,var(--ring-950) .1rem,var(--ring-950) .5rem,transparent .5rem,transparent 4rem,var(--ring-950) 4rem,var(--ring-950) 4.4rem,transparent 4.4rem,transparent 8rem,var(--ring-950) 8rem,var(--ring-950) 8.4rem,transparent 8.4rem)}
+.ropes>*{position:relative}
+
+/* block letters: orange face, darker side, a shadow on the canvas */
+.block{font-family:var(--block);font-weight:400;line-height:.92;letter-spacing:.01em;color:var(--glove-500);overflow-wrap:break-word;min-width:0;--side:var(--glove-700);--under:var(--glove-900);
+  text-shadow:0 .02em 0 var(--side),0 .04em 0 var(--side),0 .06em 0 var(--side),0 .08em 0 var(--under),0 .1em 0 var(--under),0 .2em .16em rgba(2,10,24,.6)}
+.block--lose{color:var(--flame);--side:var(--flame-deep);--under:#4d0a02}
+.block--win{color:var(--neon);--side:#1c8ea3;--under:#0b4f5e}
+
+/* the neon line */
+.neon{font-family:var(--script);font-weight:400;color:#f4ffff;line-height:1;display:inline-block;transform:rotate(-5deg);
+  text-shadow:0 0 .06em #fff,0 0 .22em var(--neon),0 0 .6em rgba(143,246,255,.75),0 0 1.2em rgba(31,134,220,.8)}
+
+/* the marquee: stars, block word, neon word tucked under it */
+.marquee{display:grid;justify-items:center;text-align:center}
+.marquee__stars{display:flex;gap:.5rem;color:#ffd84a;filter:drop-shadow(0 2px 0 #b98a00)}
+.marquee__stars svg{width:1.5rem;height:1.5rem}
+.marquee__block{font-size:clamp(4.2rem,17vw,11rem)}
+.marquee__neon{font-size:clamp(2.6rem,9vw,5.6rem);margin-top:-.28em}
+.marquee--s .marquee__block{font-size:clamp(2.6rem,6vw,4.6rem)}
+.marquee--s .marquee__neon{font-size:clamp(1.6rem,3.4vw,2.6rem)}
+.marquee--s .marquee__stars svg{width:1rem;height:1rem}
+
+/* the tape: the white pill a score sits on */
+.tape{display:inline-flex;align-items:center;gap:.6rem;background:var(--tape);color:var(--ink);border-radius:var(--r-pill);padding:.3rem .9rem;font-weight:700;box-shadow:0 3px 0 var(--tape-3)}
+.tape b{color:var(--glove-700)}
+
+/* panels sit on the canvas */
+.panel{background:var(--panel);border:2px solid var(--line);border-radius:var(--r-card);padding:1.4rem 1.5rem}
+.panel--hot{border-color:var(--glove-500)}
+.head{font-family:var(--block);font-weight:400;font-size:1.55rem;line-height:1.1;color:var(--tape);text-wrap:balance}
+.sub{color:var(--tape-2)}
+
+/* rounds: one card per round, a bell-coloured edge for the result */
+.rounds{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr))}
+.round{background:var(--panel);border:2px solid var(--line);border-radius:var(--r-card);padding:1.1rem 1.2rem 1.2rem;display:grid;gap:.5rem;align-content:start}
+.round__no{font-weight:700;color:var(--tape-3)}
+.round__name{font-family:var(--block);font-weight:400;font-size:1.5rem;line-height:1.1}
+.round__score{font-family:var(--block);font-weight:400;font-size:3.4rem;line-height:1;color:var(--tape)}
+.round__score small{font-family:var(--hud);font-weight:700;font-size:1rem;color:var(--tape-2);margin-left:.4rem}
+.round__says{color:var(--tape-2);font-size:1rem}
+.round[data-result="win"]{border-color:var(--win)}
+.round[data-result="win"] .round__score{color:var(--win)}
+.round[data-result="lose"]{border-color:var(--lose)}
+.round[data-result="lose"] .round__score{color:var(--lose)}
+.meter{height:.7rem;border-radius:var(--r-pill);background:var(--ring-950);overflow:hidden;border:1px solid var(--line)}
+.meter i{display:block;height:100%;width:var(--v,0%);background:var(--lose);border-radius:inherit;transition:width 500ms cubic-bezier(.2,.8,.2,1)}
+
+.round[data-result="win"] .meter i{background:var(--win)}
+
+/* the call */
+.call{font-size:clamp(3rem,9vw,6.5rem);display:inline-block;transform:rotate(-3deg)}
+
+/* buttons: a block you press down */
+.btn{font:inherit;font-family:var(--block);font-weight:400;font-size:1.25rem;line-height:1;color:var(--ink);background:linear-gradient(180deg,var(--glove-300),var(--glove-500));border:0;border-radius:14px;padding:0 1.5rem;min-height:3.25rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;white-space:nowrap;
+  box-shadow:0 6px 0 var(--glove-700),0 10px 18px rgba(2,10,24,.5);transition:transform var(--t),box-shadow var(--t)}
+.ring a.btn{color:var(--ink)}
+.btn:hover{transform:translateY(-1px);box-shadow:0 7px 0 var(--glove-700),0 12px 20px rgba(2,10,24,.5)}
+.btn:active{transform:translateY(5px);box-shadow:0 1px 0 var(--glove-700),0 3px 8px rgba(2,10,24,.5)}
+.btn:disabled{filter:saturate(.3);cursor:progress}
+.btn--s{font-family:var(--hud);font-weight:700;font-size:1rem;min-height:2.75rem;padding:0 1rem;border-radius:10px;box-shadow:0 4px 0 var(--glove-700)}
+.btn--s:active{transform:translateY(3px);box-shadow:0 1px 0 var(--glove-700)}
+
+/* fields and commands */
+.field{font:inherit;font-weight:500;color:var(--tape);background:var(--ring-950);border:2px solid var(--line);border-radius:14px;min-height:3.25rem;padding:0 1rem;width:100%;min-width:0}
+.field::placeholder{color:var(--tape-3)}
+.field:focus-visible{border-color:var(--neon)}
+.cmd{display:flex;gap:.6rem;align-items:stretch}
+.cmd pre{flex:1;min-width:0;margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.84rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;color:var(--tape);background:var(--ring-950);border:2px solid var(--line);border-radius:12px;padding:.8rem 1rem}
+
+/* the card: who is on tonight, best first */
+.card{list-style:none;padding:0;display:grid;gap:.5rem}
+.card li{display:grid;grid-template-columns:2.4rem minmax(0,1fr) auto;gap:.8rem;align-items:center;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:.55rem .9rem}
+.card li[data-ship="true"]{border-color:var(--win)}
+.card__rank{font-family:var(--block);font-weight:400;font-size:1.5rem;color:var(--glove-500)}
+.card__name{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card__host{display:block;font-weight:500;font-size:.85rem;color:var(--tape-3);overflow:hidden;text-overflow:ellipsis}
+.chips{display:flex;gap:.35rem}
+.chip{font-weight:700;font-size:.95rem;min-width:2.9rem;text-align:center;border-radius:var(--r-chip);padding:.15rem .4rem;background:var(--ring-950);border:2px solid var(--lose);color:var(--lose)}
+.chip[data-result="win"]{border-color:var(--win);color:var(--win)}
+
+/* findings in a report */
+.finds{list-style:none;padding:0;display:grid;gap:.5rem}
+.finds li{border:2px solid var(--lose);background:var(--ring-950);border-radius:10px;padding:.5rem .8rem}
+.finds li small{display:block;color:var(--tape-2)}
+
+.fine{color:var(--tape-3);font-size:.95rem}
+
+@keyframes land{from{transform:scale(1.5) rotate(-9deg);opacity:0}to{transform:scale(1) rotate(-3deg);opacity:1}}
+.call.is-new{animation:land 380ms cubic-bezier(.2,1.2,.3,1)}
+@media (prefers-reduced-motion:reduce){.call.is-new{animation:none}.btn,.meter i{transition:none}}

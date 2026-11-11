@@ -1,0 +1,6 @@
+out
+docs
+tests
+.env
+.env.local
+.projects
