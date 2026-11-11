@@ -31,7 +31,8 @@ Price: ${priceUsd()} USD per POST /check, paid over MPP (Machine Payments Protoc
 1. Deploy the page somewhere public. Addresses that are not on the public internet (localhost, private ranges) are refused.
 2. POST ${base}/score with JSON { "url": "https://..." } (free): pass or fail per round and the counts, no detail.
 3. POST ${base}/check with JSON { "url": "https://...", "name": "optional, 2 to 24 characters" } (paid).
-   - A bad URL, or a page that cannot be reached, is refused with 400 or 422 before any payment.
+   - Call /score first: it is free and tells you whether the address can be checked at all.
+   - A page that cannot be reached or read is refused with 422 before any payment. A request with no usable body gets the 402 like any other, so send the JSON body on the first call.
    - Otherwise 402 with a WWW-Authenticate: Payment challenge. Pay over MPP and retry, e.g.
      npx mppx@0.17.1 ${base}/check -X POST -H 'content-type: application/json' -d '{"url":"https://..."}' -a me --network testnet
    - Paid: 200 with the report and a Payment-Receipt header.
@@ -65,7 +66,7 @@ function openapi(base: string): object {
   const json = (schema: object) => ({ "application/json": { schema } });
   const req = (extra: object = {}) => ({
     required: true,
-    content: json({ type: "object", required: ["url"], properties: { url: { type: "string", description: "Public http(s) address of the page" }, ...extra } }),
+    content: json({ type: "object", required: ["url"], properties: { url: { type: "string", format: "uri", description: "Public http(s) address of the page", example: "https://example.com" }, ...extra }, example: { url: "https://example.com" } }),
   });
   const error = { type: "object", properties: { error: { type: "string" } } };
   return {
@@ -159,7 +160,18 @@ app.post("/score", async (c) => {
 
 app.post("/check", async (c) => {
   const body = await readBody(c);
-  if ("error" in body) return c.json({ error: body.error }, 400);
+  if ("error" in body) {
+    // A caller with no payment attached and no usable body is asking what this route
+    // costs (service checkers do this), so it gets the 402. With a payment attached,
+    // a bad body is refused and the payment is left untouched.
+    const paying = /^payment\s/i.test(c.req.header("authorization") ?? "");
+    const ready = paying ? null : getMppx();
+    if (ready) {
+      const probe = await (await ready).charge({ amount: priceUsd() })(c.req.raw);
+      if (probe.status === 402) return probe.challenge;
+    }
+    return c.json({ error: body.error }, 400);
+  }
   // The page is fetched before the 402, so nobody pays for a page we cannot reach.
   const r = await check(body.url);
   if ("error" in r) return c.json({ error: r.error }, r.status);
