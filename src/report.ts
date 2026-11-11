@@ -101,6 +101,11 @@ export function runCheck(url: string): Promise<Report> {
     const type = String(page.headers["content-type"] ?? "");
     if (page.status < 400 && type && !/html|xml/i.test(type)) throw new NotAPage(`that address serves ${type.split(";")[0]}, not a web page`);
     const parts = readPage(page.body.toString("utf8"), page.finalUrl);
+    // An empty shell that JavaScript fills in: we would be scoring a blank page, and a blank page passes everything.
+    const words = (parts.blocks.join(" ").match(/[\p{L}\p{N}'’-]+/gu) ?? []).length;
+    if (words < 40 && parts.root.querySelectorAll("script").length > 0) {
+      throw new NotAPage("this page is drawn by JavaScript after it loads, and Ship Check reads the HTML only for now, so there is nothing fair to score");
+    }
     return analyse(page, await loadCss(parts.stylesheetUrls));
   })();
   cache.set(url, { at: Date.now(), report });
